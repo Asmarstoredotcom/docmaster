@@ -3,400 +3,371 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DocMaster — Intelligence Documentaire d'Élite</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500&family=Inter+Tight:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<title>DocMaster IA — Votre assistant documentaire intelligent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f4f1ea;
-    --paper: #efeae0;
-    --ink: #0a0a0a;
-    --ink-soft: #2a2a2a;
-    --ink-mute: #6a6862;
-    --accent: #c8392c;
-    --line: rgba(10,10,10,0.12);
+    --cream: #F5F0E8;
+    --dark: #0F0F0E;
+    --accent: #C8A96E;
+    --accent-light: #E8D5A8;
+    --text-muted: #6B6558;
+    --border: rgba(200,169,110,0.2);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--ink); font-family: 'Inter Tight', sans-serif; font-weight: 300; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E"); opacity: 0.08; pointer-events: none; z-index: 1000; mix-blend-mode: multiply; }
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; background: rgba(244,241,234,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--line); }
-  .nav-brand { display: flex; align-items: center; gap: 14px; }
-  .brand-mark { width: 38px; height: 38px; background: var(--ink); color: var(--bg); display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px; border-radius: 2px; }
-  .brand-text { font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; letter-spacing: -0.02em; }
-  .nav-links { display: flex; gap: 40px; align-items: center; }
-  .nav-link { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute); text-decoration: none; transition: color 0.2s; }
-  .nav-link:hover { color: var(--ink); }
-  .nav-cta { padding: 10px 20px; background: var(--ink); color: var(--bg); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 2px; transition: all 0.2s; }
-  .nav-cta:hover { background: var(--accent); }
-  .hero { padding: 160px 48px 80px; max-width: 1400px; margin: 0 auto; }
-  .hero-meta { display: grid; grid-template-columns: 1fr auto 1fr; gap: 40px; margin-bottom: 80px; align-items: end; padding-bottom: 40px; border-bottom: 1px solid var(--line); }
-  .meta-left, .meta-right { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute); line-height: 1.7; }
-  .meta-right { text-align: right; }
-  .meta-center { font-family: 'Fraunces', serif; font-size: 13px; font-style: italic; color: var(--ink-soft); letter-spacing: 0.02em; }
-  .hero-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(64px, 10vw, 160px); line-height: 0.9; letter-spacing: -0.04em; margin-bottom: 60px; }
-  .hero-title em { font-style: italic; font-weight: 400; color: var(--accent); }
-  .hero-title .stroke { -webkit-text-stroke: 1px var(--ink); color: transparent; font-style: italic; }
-  .hero-bottom { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: end; }
-  .hero-lede { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 300; line-height: 1.4; color: var(--ink-soft); max-width: 520px; letter-spacing: -0.01em; }
-  .hero-lede strong { font-weight: 500; color: var(--ink); }
-  .hero-cta-block { display: flex; flex-direction: column; gap: 20px; }
-  .primary-btn { display: inline-flex; align-items: center; justify-content: space-between; padding: 22px 32px; background: var(--ink); color: var(--bg); text-decoration: none; font-family: 'Inter Tight', sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0.02em; transition: all 0.3s; border-radius: 2px; gap: 32px; cursor: pointer; border: none; }
-  .primary-btn:hover { background: var(--accent); transform: translateY(-2px); }
-  .primary-btn .arrow { font-family: 'Fraunces', serif; font-size: 22px; transition: transform 0.3s; }
-  .primary-btn:hover .arrow { transform: translateX(6px); }
-  .secondary-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-mute); }
-  .marquee { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; background: var(--ink); color: var(--bg); padding: 22px 0; }
-  .marquee-inner { display: flex; gap: 60px; animation: scroll 40s linear infinite; white-space: nowrap; }
-  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .marquee-item { font-family: 'Fraunces', serif; font-size: 22px; font-style: italic; font-weight: 300; display: flex; align-items: center; gap: 60px; }
-  .marquee-item::after { content: '✦'; font-size: 14px; color: var(--accent); font-style: normal; }
-  .demo { padding: 120px 48px; max-width: 1400px; margin: 0 auto; }
-  .section-label { display: flex; align-items: center; gap: 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 40px; }
-  .section-label::before { content: ''; width: 32px; height: 1px; background: var(--ink-mute); }
-  .section-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(40px, 5vw, 64px); line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 60px; max-width: 900px; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--dark);
+    color: var(--cream);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 3rem;
+    background: rgba(15,15,14,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem; font-weight: 600;
+    color: var(--accent); letter-spacing: -0.02em;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--cream); opacity: 0.7; text-decoration: none;
+    font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+  .nav-cta {
+    background: var(--accent); color: var(--dark);
+    padding: 0.6rem 1.6rem; border-radius: 2px;
+    font-size: 0.85rem; font-weight: 600; text-decoration: none;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--accent-light); }
+
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 8rem 2rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(200,169,110,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-kicker {
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1.5rem; opacity: 0.9;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(3rem, 7vw, 6rem); font-weight: 300;
+    line-height: 1.05; letter-spacing: -0.03em;
+    margin-bottom: 2rem; max-width: 900px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub {
+    font-size: 1.1rem; color: rgba(245,240,232,0.65);
+    max-width: 560px; line-height: 1.7; margin-bottom: 3rem;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .btn-primary {
+    background: var(--accent); color: var(--dark);
+    padding: 1rem 2.5rem; border-radius: 2px;
+    font-size: 0.9rem; font-weight: 600; text-decoration: none;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    transition: background 0.2s, transform 0.1s; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+  .btn-secondary {
+    border: 1px solid var(--border); color: var(--cream);
+    padding: 1rem 2.5rem; border-radius: 2px;
+    font-size: 0.9rem; text-decoration: none;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    transition: border-color 0.2s; display: inline-block;
+  }
+  .btn-secondary:hover { border-color: var(--accent); }
+
+  .stats-bar {
+    display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .stat { text-align: center; }
+  .stat-number {
+    font-family: 'Fraunces', serif;
+    font-size: 2.5rem; font-weight: 300; color: var(--accent); display: block;
+  }
+  .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; line-height: 1.15;
+    letter-spacing: -0.02em; margin-bottom: 1.5rem;
+  }
   .section-title em { font-style: italic; color: var(--accent); }
-  .demo-container { background: var(--ink); color: var(--bg); border-radius: 4px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.15); }
-  .demo-header { padding: 20px 28px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; }
-  .demo-dots { display: flex; gap: 6px; }
-  .demo-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); }
-  .demo-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.05em; }
-  .demo-body { display: grid; grid-template-columns: 1fr 1fr; min-height: 540px; }
-  .demo-input { padding: 40px; border-right: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; }
-  .demo-input-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; }
-  .demo-textarea { flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--bg); padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; resize: none; outline: none; border-radius: 2px; transition: border-color 0.2s; }
-  .demo-textarea:focus { border-color: var(--accent); }
-  .demo-textarea::placeholder { color: rgba(255,255,255,0.25); }
-  .demo-samples { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
-  .sample-btn { padding: 6px 12px; background: transparent; border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: all 0.2s; }
-  .sample-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .demo-run { margin-top: 20px; padding: 16px 24px; background: var(--bg); color: var(--ink); border: none; font-family: 'Inter Tight', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; }
-  .demo-run:hover { background: var(--accent); color: var(--bg); }
-  .demo-run:disabled { opacity: 0.4; cursor: not-allowed; }
-  .demo-output { padding: 40px; display: flex; flex-direction: column; }
-  .demo-output-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px; }
-  .output-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: rgba(255,255,255,0.3); font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; line-height: 1.6; }
-  .output-empty::before { content: ''; width: 60px; height: 60px; border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; margin-bottom: 24px; }
-  .output-loading { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; }
-  .loader { width: 40px; height: 40px; border: 2px solid rgba(255,255,255,0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+  .features-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px; margin-top: 4rem;
+  }
+  .feature-card {
+    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+    padding: 2.5rem 2rem; transition: background 0.2s;
+  }
+  .feature-card:hover { background: rgba(200,169,110,0.05); }
+  .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .feature-card h3 {
+    font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 400;
+    margin-bottom: 0.75rem; color: var(--cream);
+  }
+  .feature-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+
+  #demo {
+    background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+    border-radius: 4px; padding: 3rem; margin-top: 4rem;
+  }
+  .demo-header { margin-bottom: 2rem; }
+  .demo-header h3 { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 300; margin-bottom: 0.5rem; }
+  .demo-header p { font-size: 0.9rem; color: var(--text-muted); }
+  .demo-textarea {
+    width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 2px;
+    color: var(--cream); padding: 1.2rem; font-family: 'Inter', sans-serif; font-size: 0.85rem;
+    resize: vertical; min-height: 160px; line-height: 1.6; margin-bottom: 1rem;
+  }
+  .demo-textarea:focus { outline: none; border-color: var(--accent); }
+  .demo-textarea::placeholder { color: var(--text-muted); }
+  .demo-options { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .demo-options label { font-size: 0.8rem; color: var(--text-muted); }
+  .demo-options input {
+    background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+    color: var(--cream); padding: 0.5rem 0.8rem; font-size: 0.85rem; border-radius: 2px; width: 200px;
+  }
+  .demo-options input:focus { outline: none; border-color: var(--accent); }
+  .demo-submit {
+    background: var(--accent); color: var(--dark); padding: 0.9rem 2rem; border: none; border-radius: 2px;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer; letter-spacing: 0.05em; text-transform: uppercase; transition: background 0.2s;
+  }
+  .demo-submit:hover { background: var(--accent-light); }
+  .demo-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .demo-status { margin-top: 1.5rem; display: none; align-items: center; gap: 0.75rem; font-size: 0.85rem; }
+  .demo-status.visible { display: flex; }
+  .spinner { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .loader-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
-  .output-result { flex: 1; overflow-y: auto; }
-  .result-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .result-type { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 400; }
-  .result-type em { font-style: italic; color: var(--accent); }
-  .result-confidence { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 0.08em; }
-  .result-confidence strong { color: var(--accent); font-weight: 500; margin-left: 6px; }
-  .result-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; margin-bottom: 24px; }
-  .result-field { padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .result-field-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
-  .result-field-value { font-family: 'Inter Tight', sans-serif; font-size: 14px; color: var(--bg); font-weight: 400; }
-  .result-field-value.big { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 400; color: var(--accent); }
-  .result-resume { background: rgba(255,255,255,0.04); border-left: 2px solid var(--accent); padding: 16px 20px; font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.85); }
-  .result-time { margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; text-transform: uppercase; }
-  .metrics { padding: 120px 48px; max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .metric { padding: 50px 30px; border-right: 1px solid var(--line); }
-  .metric:last-child { border-right: none; }
-  .metric-num { font-family: 'Fraunces', serif; font-size: 90px; font-weight: 300; line-height: 1; letter-spacing: -0.03em; margin-bottom: 16px; }
-  .metric-num em { font-style: italic; color: var(--accent); }
-  .metric-num sup { font-size: 30px; color: var(--ink-mute); vertical-align: super; font-weight: 300; }
-  .metric-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-mute); line-height: 1.6; }
-  .features { padding: 120px 48px; max-width: 1400px; margin: 0 auto; }
-  .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-top: 1px solid var(--line); }
-  .feature { padding: 50px 40px 50px 0; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); }
-  .feature:nth-child(2n) { border-right: none; padding-left: 40px; padding-right: 0; }
-  .feature-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 24px; }
-  .feature-title { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 16px; }
-  .feature-title em { font-style: italic; }
-  .feature-desc { font-size: 15px; line-height: 1.6; color: var(--ink-soft); max-width: 480px; }
-  .quote { padding: 160px 48px; max-width: 1100px; margin: 0 auto; text-align: center; }
-  .quote-mark { font-family: 'Fraunces', serif; font-size: 120px; font-style: italic; line-height: 0.5; color: var(--accent); margin-bottom: 30px; }
-  .quote-text { font-family: 'Fraunces', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 40px; }
-  .quote-text em { font-style: italic; color: var(--accent); }
-  .quote-attr { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-mute); }
-  .pricing { padding: 120px 48px; max-width: 1400px; margin: 0 auto; }
-  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 60px; border: 1px solid var(--ink); }
-  .plan { padding: 50px 40px; border-right: 1px solid var(--line); background: var(--paper); }
-  .plan:last-child { border-right: none; }
-  .plan.featured { background: var(--ink); color: var(--bg); }
-  .plan-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 24px; }
-  .plan.featured .plan-name { color: var(--accent); }
-  .plan-price { font-family: 'Fraunces', serif; font-size: 64px; font-weight: 300; line-height: 1; letter-spacing: -0.03em; margin-bottom: 4px; }
-  .plan-period { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-mute); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 32px; }
-  .plan.featured .plan-period { color: rgba(255,255,255,0.5); }
-  .plan-features { list-style: none; margin-bottom: 32px; }
-  .plan-features li { padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 14px; line-height: 1.5; display: flex; align-items: flex-start; gap: 12px; }
-  .plan.featured .plan-features li { border-bottom-color: rgba(255,255,255,0.08); }
-  .plan-features li::before { content: '→'; color: var(--accent); flex-shrink: 0; font-family: 'Fraunces', serif; }
-  .plan-btn { display: block; text-align: center; padding: 18px; background: transparent; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; transition: all 0.2s; cursor: pointer; width: 100%; }
-  .plan-btn:hover { background: var(--ink); color: var(--bg); }
-  .plan.featured .plan-btn { border-color: var(--accent); background: var(--accent); color: var(--bg); }
-  footer { background: var(--ink); color: var(--bg); padding: 80px 48px 40px; }
-  .footer-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 80px; }
-  .footer-big { font-family: 'Fraunces', serif; font-size: 48px; font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; max-width: 500px; }
-  .footer-big em { font-style: italic; color: var(--accent); }
-  .footer-col h4 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 20px; }
-  .footer-col a { display: block; color: var(--bg); text-decoration: none; padding: 8px 0; font-size: 14px; transition: color 0.2s; }
-  .footer-col a:hover { color: var(--accent); }
-  .footer-bottom { max-width: 1400px; margin: 0 auto; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; }
-  @media (max-width: 1024px) { .metrics { grid-template-columns: repeat(2, 1fr); } .demo-body { grid-template-columns: 1fr; } .demo-input { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); } .result-fields { grid-template-columns: 1fr; } .footer-content { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 768px) { nav { padding: 20px 24px; } .nav-links { display: none; } .hero { padding: 130px 24px 60px; } .hero-meta { grid-template-columns: 1fr; gap: 20px; } .hero-bottom { grid-template-columns: 1fr; gap: 40px; } .demo, .features, .metrics, .pricing, .quote { padding: 80px 24px; } .features-grid { grid-template-columns: 1fr; } .feature { border-right: none; padding: 40px 0; } .pricing-grid { grid-template-columns: 1fr; } .plan { border-right: none; border-bottom: 1px solid var(--line); } .footer-content { grid-template-columns: 1fr; gap: 40px; } .footer-big { font-size: 32px; } .footer-bottom { flex-direction: column; gap: 12px; } }
+  .demo-result { margin-top: 2rem; display: none; background: rgba(0,0,0,0.4); border: 1px solid rgba(200,169,110,0.3); border-radius: 2px; padding: 1.5rem; }
+  .demo-result.visible { display: block; }
+  .result-tag { display: inline-block; background: var(--accent); color: var(--dark); padding: 0.2rem 0.7rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 1px; margin-bottom: 1rem; }
+  .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .result-field label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.2rem; }
+  .result-field span { font-size: 0.9rem; color: var(--cream); }
+  .result-summary { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.85rem; color: rgba(245,240,232,0.7); font-style: italic; }
+  .demo-error { margin-top: 1.5rem; display: none; background: rgba(200,60,60,0.1); border: 1px solid rgba(200,60,60,0.3); border-radius: 2px; padding: 1rem 1.5rem; font-size: 0.85rem; color: #f08080; }
+  .demo-error.visible { display: block; }
+
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 4rem; }
+  .pricing-card { border: 1px solid var(--border); padding: 2.5rem 2rem; border-radius: 2px; position: relative; }
+  .pricing-card.featured { border-color: var(--accent); background: rgba(200,169,110,0.05); }
+  .pricing-badge { position: absolute; top: -1px; right: 2rem; background: var(--accent); color: var(--dark); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.3rem 0.8rem; }
+  .pricing-tier { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+  .pricing-price { font-family: 'Fraunces', serif; font-size: 3rem; font-weight: 300; color: var(--cream); margin-bottom: 0.25rem; }
+  .pricing-price span { font-size: 1rem; color: var(--text-muted); }
+  .pricing-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; }
+  .pricing-features { list-style: none; margin-bottom: 2rem; }
+  .pricing-features li { font-size: 0.85rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); color: rgba(245,240,232,0.8); }
+  .pricing-features li::before { content: '→  '; color: var(--accent); }
+
+  footer { border-top: 1px solid var(--border); padding: 3rem 2rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; }
+  .footer-logo { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 300; color: var(--accent); margin-bottom: 1rem; display: block; }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .stats-bar { gap: 2rem; }
+    #demo { padding: 2rem 1.5rem; }
+  }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-brand">
-    <div class="brand-mark">D</div>
-    <div class="brand-text">DocMaster</div>
-  </div>
-  <div class="nav-links">
-    <a href="#demo" class="nav-link">Démonstration</a>
-    <a href="#features" class="nav-link">Capacités</a>
-    <a href="#pricing" class="nav-link">Tarifs</a>
-    <a href="#contact" class="nav-cta">Réserver une démo</a>
-  </div>
+  <div class="nav-logo">DocMaster IA</div>
+  <ul class="nav-links">
+    <li><a href="#features">Fonctionnalités</a></li>
+    <li><a href="#demo-section">Démo live</a></li>
+    <li><a href="#pricing">Tarifs</a></li>
+  </ul>
+  <a href="mailto:contact@asmarstore.com" class="nav-cta">Nous contacter</a>
 </nav>
 
 <section class="hero">
-  <div class="hero-meta">
-    <div class="meta-left">Volume N°01<br>Édition 2026</div>
-    <div class="meta-center">"L'intelligence documentaire,<br>réinventée pour l'entreprise moderne."</div>
-    <div class="meta-right">Paris — Lyon<br>Disponible 24/7</div>
-  </div>
-  <h1 class="hero-title">
-    Vos documents,<br><em>analysés</em> en<br><span class="stroke">3 secondes</span>.
-  </h1>
-  <div class="hero-bottom">
-    <p class="hero-lede">DocMaster est un agent d'intelligence artificielle qui extrait, classifie et structure vos factures, contrats, bons de commande et emails — <strong>automatiquement, sans intervention humaine</strong>.</p>
-    <div class="hero-cta-block">
-      <a href="#demo" class="primary-btn">Tester gratuitement maintenant <span class="arrow">→</span></a>
-      <span class="secondary-text">Aucune installation — Résultat immédiat</span>
-    </div>
+  <p class="hero-kicker">Intelligence Artificielle · Traitement documentaire</p>
+  <h1>Vos documents traités en <em>secondes</em>, pas en heures</h1>
+  <p class="hero-sub">DocMaster IA analyse, classifie et extrait automatiquement les données de vos factures, contrats, bons de commande et emails — et les synchronise dans vos outils.</p>
+  <div class="hero-actions">
+    <a href="#demo-section" class="btn-primary">Voir la démo live</a>
+    <a href="mailto:contact@asmarstore.com" class="btn-secondary">Demander un devis</a>
   </div>
 </section>
 
-<div class="marquee">
-  <div class="marquee-inner">
-    <span class="marquee-item">Factures fournisseurs</span>
-    <span class="marquee-item">Contrats commerciaux</span>
-    <span class="marquee-item">Bons de commande</span>
-    <span class="marquee-item">Emails professionnels</span>
-    <span class="marquee-item">Devis & propositions</span>
-    <span class="marquee-item">Factures fournisseurs</span>
-    <span class="marquee-item">Contrats commerciaux</span>
-    <span class="marquee-item">Bons de commande</span>
-    <span class="marquee-item">Emails professionnels</span>
-    <span class="marquee-item">Devis & propositions</span>
-  </div>
+<div class="stats-bar">
+  <div class="stat"><span class="stat-number">&lt; 3s</span><span class="stat-label">Traitement moyen</span></div>
+  <div class="stat"><span class="stat-number">4</span><span class="stat-label">Types de documents</span></div>
+  <div class="stat"><span class="stat-number">3</span><span class="stat-label">Destinations sync</span></div>
+  <div class="stat"><span class="stat-number">98%</span><span class="stat-label">Précision extraction</span></div>
 </div>
 
-<section class="demo" id="demo">
-  <div class="section-label">01 — Démonstration en direct</div>
-  <h2 class="section-title">Collez un document, observez l'<em>extraction</em>.</h2>
-  <div class="demo-container">
-    <div class="demo-header">
-      <div class="demo-dots"><span class="demo-dot"></span><span class="demo-dot"></span><span class="demo-dot"></span></div>
-      <div class="demo-url">docmaster.ai / live-demo</div>
-    </div>
-    <div class="demo-body">
-      <div class="demo-input">
-        <div class="demo-input-label">Document source</div>
-        <textarea id="demoInput" class="demo-textarea" placeholder="Collez ici votre document — facture, contrat, bon de commande, email..."></textarea>
-        <div class="demo-samples">
-          <button class="sample-btn" onclick="loadSample('facture')">Exemple Facture</button>
-          <button class="sample-btn" onclick="loadSample('contrat')">Exemple Contrat</button>
-          <button class="sample-btn" onclick="loadSample('bc')">Exemple BC</button>
-          <button class="sample-btn" onclick="loadSample('email')">Exemple Email</button>
-        </div>
-        <button class="demo-run" id="runBtn" onclick="runDemo()">Lancer l'analyse <span>→</span></button>
-      </div>
-      <div class="demo-output" id="demoOutput">
-        <div class="demo-output-label">Résultat de l'analyse</div>
-        <div class="output-empty">En attente d'un document.<br>L'analyse apparaîtra ici.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="metrics">
-  <div class="metric"><div class="metric-num"><em>2,6</em><sup>s</sup></div><div class="metric-label">Temps moyen<br>de traitement</div></div>
-  <div class="metric"><div class="metric-num">98<sup>%</sup></div><div class="metric-label">Précision<br>d'extraction</div></div>
-  <div class="metric"><div class="metric-num"><em>4</em></div><div class="metric-label">Types de documents<br>pris en charge</div></div>
-  <div class="metric"><div class="metric-num">24<sup>/7</sup></div><div class="metric-label">Disponibilité<br>garantie</div></div>
-</section>
-
-<section class="features" id="features">
-  <div class="section-label">02 — Capacités</div>
-  <h2 class="section-title">Conçu pour les exigences les plus <em>strictes</em>.</h2>
+<section class="section" id="features">
+  <p class="section-label">Ce que fait DocMaster IA</p>
+  <h2 class="section-title">Une IA entraînée pour <em>votre</em> gestion documentaire</h2>
   <div class="features-grid">
-    <div class="feature"><div class="feature-num">⟶ 01</div><h3 class="feature-title">Classification <em>intelligente</em></h3><p class="feature-desc">L'agent identifie automatiquement le type de document avec un taux de confiance supérieur à 95%. Aucun paramétrage manuel requis.</p></div>
-    <div class="feature"><div class="feature-num">⟶ 02</div><h3 class="feature-title">Extraction <em>structurée</em></h3><p class="feature-desc">Numéros, montants, dates, parties prenantes, échéances — toutes les données critiques sont extraites au format exploitable.</p></div>
-    <div class="feature"><div class="feature-num">⟶ 03</div><h3 class="feature-title">Multi-<em>destinations</em></h3><p class="feature-desc">Sauvegarde simultanée dans Google Sheets, Notion, Airtable, ou votre CRM. Une seule analyse, plusieurs systèmes alimentés.</p></div>
-    <div class="feature"><div class="feature-num">⟶ 04</div><h3 class="feature-title">Confidentialité <em>absolue</em></h3><p class="feature-desc">Aucune donnée stockée. Traitement chiffré de bout en bout. Conforme RGPD. Vos documents restent vos documents.</p></div>
+    <div class="feature-card"><div class="feature-icon">🧠</div><h3>Classification automatique</h3><p>Factures, contrats, bons de commande, emails — identifiés instantanément par l'IA Claude d'Anthropic.</p></div>
+    <div class="feature-card"><div class="feature-icon">📊</div><h3>Extraction structurée</h3><p>Montants, dates, numéros, parties, échéances extraits et organisés en champs structurés.</p></div>
+    <div class="feature-card"><div class="feature-icon">🔗</div><h3>Sync multi-destinations</h3><p>Google Sheets, Notion, Airtable — synchronisation automatique là où vos équipes travaillent.</p></div>
+    <div class="feature-card"><div class="feature-icon">⚡</div><h3>API prête à intégrer</h3><p>Webhook REST simple. Envoyez un document, recevez les données JSON en moins de 3 secondes.</p></div>
+    <div class="feature-card"><div class="feature-icon">🔒</div><h3>Hébergement souverain</h3><p>Déployé sur VPS en Europe. Vos documents ne quittent jamais votre infrastructure.</p></div>
+    <div class="feature-card"><div class="feature-icon">📈</div><h3>Tableau de bord temps réel</h3><p>Visualisez tous vos documents traités, leur statut et montants depuis un tableau centralisé.</p></div>
   </div>
 </section>
 
-<section class="quote">
-  <div class="quote-mark">"</div>
-  <p class="quote-text">Une heure de saisie quotidienne <em>éliminée</em>.<br>Un retour sur investissement immédiat.</p>
-  <div class="quote-attr">— Témoignage client, secteur comptabilité</div>
+<section class="section" id="demo-section">
+  <p class="section-label">Démo interactive</p>
+  <h2 class="section-title">Testez <em>maintenant</em> en temps réel</h2>
+  <p style="color:var(--text-muted); font-size:0.9rem; margin-top:0.5rem;">Collez un extrait de votre document. L'IA l'analyse et retourne les données extraites.</p>
+  <div id="demo">
+    <div class="demo-header"><h3>Analyse de document</h3><p>Exemples: facture, contrat, bon de commande, email client</p></div>
+    <textarea class="demo-textarea" id="docInput" placeholder="Collez ici votre document...
+
+Exemple:
+FACTURE N° 2024-0142
+Date : 15 mai 2024
+Client : Entreprise Martin SAS
+Montant TTC : 5 400,00 €
+Échéance : 15 juin 2024"></textarea>
+    <div class="demo-options">
+      <label>Nom du fichier (optionnel)</label>
+      <input type="text" id="fileNameInput" placeholder="facture_mai_2024.pdf">
+    </div>
+    <button class="demo-submit" id="submitBtn" onclick="analyzeDoc()">✦ Analyser le document</button>
+    <div class="demo-status" id="demoStatus"><div class="spinner"></div><span>Analyse en cours par Claude IA...</span></div>
+    <div class="demo-error" id="demoError"></div>
+    <div class="demo-result" id="demoResult">
+      <div class="result-tag" id="resultDocType">—</div>
+      <div class="result-grid" id="resultGrid"></div>
+      <div class="result-summary" id="resultSummary"></div>
+    </div>
+  </div>
 </section>
 
-<section class="pricing" id="pricing">
-  <div class="section-label">03 — Tarification</div>
-  <h2 class="section-title">Un service en <em>location</em>. Sans engagement.</h2>
+<section class="section" id="pricing">
+  <p class="section-label">Offres</p>
+  <h2 class="section-title">Un tarif transparent, <em>sans surprise</em></h2>
   <div class="pricing-grid">
-    <div class="plan">
-      <div class="plan-name">Starter</div>
-      <div class="plan-price">490<span style="font-size:24px;color:var(--ink-mute);">€</span></div>
-      <div class="plan-period">par mois</div>
-      <ul class="plan-features"><li>Jusqu'à 100 documents/mois</li><li>1 type de document</li><li>1 destination</li><li>Support email</li></ul>
-      <a href="#contact" class="plan-btn">Commencer</a>
+    <div class="pricing-card">
+      <p class="pricing-tier">Starter</p><p class="pricing-price">300 <span>€/mois</span></p>
+      <p class="pricing-desc">Pour les TPE et indépendants</p>
+      <ul class="pricing-features"><li>500 documents / mois</li><li>Factures + Emails</li><li>1 destination (Google Sheets)</li><li>Support par email</li></ul>
+      <a href="mailto:contact@asmarstore.com?subject=DocMaster Starter" class="btn-secondary" style="display:block;text-align:center;">Démarrer</a>
     </div>
-    <div class="plan featured">
-      <div class="plan-name">Professional</div>
-      <div class="plan-price">990<span style="font-size:24px;color:rgba(255,255,255,0.5);">€</span></div>
-      <div class="plan-period">par mois</div>
-      <ul class="plan-features"><li>Jusqu'à 500 documents/mois</li><li>Tous types de documents</li><li>3 destinations simultanées</li><li>Support prioritaire</li><li>Personnalisation des extractions</li></ul>
-      <a href="#contact" class="plan-btn">Choisir Pro</a>
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Populaire</div>
+      <p class="pricing-tier">Business</p><p class="pricing-price">750 <span>€/mois</span></p>
+      <p class="pricing-desc">Pour les PME en croissance</p>
+      <ul class="pricing-features"><li>2 000 documents / mois</li><li>4 types de documents</li><li>3 destinations (Sheets + Notion + Airtable)</li><li>Tableau de bord dédié</li><li>Support prioritaire</li></ul>
+      <a href="mailto:contact@asmarstore.com?subject=DocMaster Business" class="btn-primary" style="display:block;text-align:center;">Démarrer</a>
     </div>
-    <div class="plan">
-      <div class="plan-name">Enterprise</div>
-      <div class="plan-price" style="font-size:48px;">Sur devis</div>
-      <div class="plan-period">facturation annuelle</div>
-      <ul class="plan-features"><li>Volume illimité</li><li>Intégrations CRM/ERP</li><li>SLA garanti 99,9%</li><li>Account manager dédié</li><li>Formation équipe incluse</li></ul>
-      <a href="#contact" class="plan-btn">Nous contacter</a>
+    <div class="pricing-card">
+      <p class="pricing-tier">Enterprise</p><p class="pricing-price">1 500 <span>€/mois</span></p>
+      <p class="pricing-desc">Déploiement sur-mesure</p>
+      <ul class="pricing-features"><li>Documents illimités</li><li>Types personnalisés</li><li>Intégrations ERP / CRM</li><li>Hébergement dédié</li><li>SLA + support dédié</li></ul>
+      <a href="mailto:contact@asmarstore.com?subject=DocMaster Enterprise" class="btn-secondary" style="display:block;text-align:center;">Nous contacter</a>
     </div>
   </div>
 </section>
 
-<footer id="contact">
-  <div class="footer-content">
-    <div>
-      <div class="footer-big">Prêt à <em>automatiser</em><br>votre gestion documentaire ?</div>
-      <a href="mailto:contact@asmarstore.com" class="primary-btn" style="margin-top:40px;background:var(--accent);">Réserver une démonstration <span class="arrow">→</span></a>
-    </div>
-    <div class="footer-col"><h4>Produit</h4><a href="#demo">Démonstration</a><a href="#features">Capacités</a><a href="#pricing">Tarifs</a></div>
-    <div class="footer-col"><h4>Entreprise</h4><a href="#">À propos</a><a href="#">Sécurité</a><a href="#">RGPD</a></div>
-    <div class="footer-col"><h4>Contact</h4><a href="mailto:contact@asmarstore.com">contact@asmarstore.com</a><a href="#">Paris, France</a></div>
-  </div>
-  <div class="footer-bottom"><div>DocMaster © 2026 — Tous droits réservés</div><div>Powered by Claude AI</div></div>
+<footer>
+  <span class="footer-logo">DocMaster IA</span>
+  <p>© 2024 DocMaster IA — Propulsé par Claude (Anthropic) &amp; n8n</p>
+  <p style="margin-top:0.5rem;"><a href="mailto:contact@asmarstore.com" style="color:var(--accent); text-decoration:none;">contact@asmarstore.com</a></p>
 </footer>
 
 <script>
-  // ===== CONFIG =====
-  const WEBHOOK = 'https://institutes-proprietary-peace-constructed.trycloudflare.com/webhook/docmaster';
+const WEBHOOK_URL = 'http://217.160.243.43/webhook/docmaster';
 
-  const SAMPLES = {
-    facture: `FACTURE N°FAC-2026-0047\nDate d'émission : 12/05/2026\nDate d'échéance : 12/06/2026\n\nFOURNISSEUR : SARL TechPro Solutions\nSIRET : 452 891 234 00019\nCLIENT : SAS Dupont & Associés\n\nDéveloppement logiciel sur mesure : 6 500€\nFormation utilisateurs : 1 200€\nMaintenance : 900€\n\nSous-total HT : 8 600,00 €\nTVA 20% : 1 720,00 €\nTOTAL TTC : 10 320,00 €\nMode de paiement : Virement bancaire`,
-    contrat: `CONTRAT DE PRESTATION N°CTR-2026-012\nEntre SARL WebAgency (SIRET 321 654 987) et SAS Martin Retail (SIRET 654 321 789)\nObjet : Refonte site e-commerce\nDurée : 6 mois du 01/06/2026 au 30/11/2026\nMontant : 24 000 € HT en 3 versements\nReconduction : Non tacite\nPréavis résiliation : 30 jours\nPénalités : 1% par semaine de retard\nJuridiction : Tribunal de Commerce de Paris\nSigné le 28/05/2026`,
-    bc: `BON DE COMMANDE N°BC-2026-0892\nÉmetteur : SAS Fournitures Pro\nFournisseur : SARL Bureau Expert\nDate : 19/05/2026\nLivraison souhaitée : 26/05/2026 — URGENT\n\n12x Chaises ergonomiques @ 320€ = 3 840€\n6x Bureaux réglables @ 580€ = 3 480€\n12x Caissons mobiles @ 145€ = 1 740€\n2x Fauteuils direction @ 890€ = 1 780€\n\nTotal HT : 10 840 €\nTVA : 2 168 €\nTotal TTC : 13 008 €`,
-    email: `De : pierre.rousseau@clientimportant.fr\nÀ : contact@asmarstore.com\nDate : 19/05/2026 09:47\nObjet : URGENT - Problème facturation + nouveau projet\n\nBonjour,\n\nVotre facture FAC-2026-0031 ne correspond pas au devis. Pourriez-vous émettre une rectificative avant le 25/05 ?\n\nNous lançons aussi un projet de digitalisation RH pour septembre 2026. Budget : 30 000 à 50 000€. Réunion possible la semaine du 26 mai ?\n\nCordialement,\nPierre Rousseau\nDAF — ClientImportant SAS`
-  };
-
-  const TYPE_LABELS = { FACTURE: 'Facture', CONTRAT: 'Contrat', BON_COMMANDE: 'Bon de Commande', EMAIL: 'Email', AUTRE: 'Document' };
-
-  function loadSample(type) {
-    document.getElementById('demoInput').value = SAMPLES[type];
+async function analyzeDoc() {
+  const docText = document.getElementById('docInput').value.trim();
+  const fileName = document.getElementById('fileNameInput').value.trim() || 'demo_document.txt';
+  if (!docText) { showError('Veuillez coller un texte de document avant de lancer l\'analyse.'); return; }
+  const btn = document.getElementById('submitBtn');
+  const status = document.getElementById('demoStatus');
+  const result = document.getElementById('demoResult');
+  const errorDiv = document.getElementById('demoError');
+  btn.disabled = true;
+  result.classList.remove('visible');
+  errorDiv.classList.remove('visible');
+  status.classList.add('visible');
+  try {
+    const response = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ document_text: docText, file_name: fileName, client_name: 'Démo DocMaster' })
+    });
+    if (!response.ok) throw new Error('Erreur serveur: ' + response.status);
+    const data = await response.json();
+    displayResult(data);
+  } catch (err) {
+    showError('Impossible de contacter le serveur d\'analyse.<br><small style="opacity:0.7">Détail: ' + err.message + '</small><br><br><small>Contactez-nous à <a href="mailto:contact@asmarstore.com" style="color:var(--accent)">contact@asmarstore.com</a></small>');
+  } finally {
+    btn.disabled = false;
+    status.classList.remove('visible');
   }
+}
 
-  async function runDemo() {
-    const input = document.getElementById('demoInput').value.trim();
-    const output = document.getElementById('demoOutput');
-    const btn = document.getElementById('runBtn');
-
-    if (!input) {
-      output.innerHTML = '<div class="demo-output-label">Erreur</div><div class="output-empty" style="color:#c8392c;">Veuillez fournir un document.</div>';
-      return;
-    }
-
-    btn.disabled = true;
-    output.innerHTML = '<div class="demo-output-label">Analyse en cours...</div><div class="output-loading"><div class="loader"></div><div class="loader-text">Traitement par l\'intelligence artificielle</div></div>';
-
-    const start = Date.now();
-
-    try {
-      // Appel direct POST sans proxy — évite le cache
-      const res = await fetch(WEBHOOK, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain' // Contourne le preflight CORS
-        },
-        body: JSON.stringify({
-          client_name: 'Demo Live',
-          file_name: 'demo.txt',
-          document_text: input
-        })
-      });
-
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch(e) { throw new Error('Réponse invalide'); }
-
-      const elapsed = ((Date.now() - start) / 1000).toFixed(2);
-      displayResult(data, elapsed);
-    } catch(e) {
-      output.innerHTML = '<div class="demo-output-label">Erreur de connexion</div><div class="output-empty" style="color:#c8392c;">Agent temporairement indisponible.<br>Vérifiez que le tunnel Cloudflare est actif.</div>';
-    } finally {
-      btn.disabled = false;
-    }
+function displayResult(data) {
+  const result = document.getElementById('demoResult');
+  const docTypeEl = document.getElementById('resultDocType');
+  const gridEl = document.getElementById('resultGrid');
+  const summaryEl = document.getElementById('resultSummary');
+  const docType = data.docType || data.type || 'Document analysé';
+  const typeLabels = { 'facture': '📄 Facture', 'contrat': '📜 Contrat', 'bon_de_commande': '🛒 Bon de commande', 'email': '📧 Email' };
+  docTypeEl.textContent = typeLabels[docType] || docType;
+  const extraction = data.extraction || data.extracted || {};
+  const fieldLabels = { numero: 'Numéro', date: 'Date', montant: 'Montant', tiers: 'Client / Fournisseur', echeance: 'Échéance', statut: 'Statut', urgence: 'Urgence', objet: 'Objet', parties: 'Parties' };
+  let html = '';
+  for (const [key, label] of Object.entries(fieldLabels)) {
+    const val = extraction[key] || data[key];
+    if (val && val !== 'null' && val !== 'N/A') html += '<div class="result-field"><label>' + label + '</label><span>' + val + '</span></div>';
   }
+  gridEl.innerHTML = html || '<div style="color:var(--text-muted);font-size:0.85rem">Données extraites disponibles dans votre tableau de bord.</div>';
+  if (data.resumeCourt || data.summary) { summaryEl.textContent = data.resumeCourt || data.summary; summaryEl.style.display = 'block'; } else { summaryEl.style.display = 'none'; }
+  result.classList.add('visible');
+}
 
-  function displayResult(data, elapsed) {
-    const doc = data.document || {};
-    const ext = data.extraction || {};
-    const type = doc.type || 'AUTRE';
-    const conf = Math.round((doc.confidence || 0) * 100);
+function showError(msg) {
+  const errorDiv = document.getElementById('demoError');
+  errorDiv.innerHTML = '⚠️ ' + msg;
+  errorDiv.classList.add('visible');
+}
 
-    let fields = [];
-    if (type === 'FACTURE') fields = [
-      { l: 'Numéro', v: ext.numero_facture },
-      { l: 'Fournisseur', v: ext.fournisseur_nom },
-      { l: 'Date émission', v: ext.date_facture },
-      { l: 'Échéance', v: ext.date_echeance },
-      { l: 'Montant TTC', v: ext.montant_ttc ? ext.montant_ttc + ' €' : null, big: true },
-      { l: 'Statut', v: ext.statut },
-    ];
-    else if (type === 'CONTRAT') fields = [
-      { l: 'Titre', v: ext.titre_contrat },
-      { l: 'Type', v: ext.type_contrat },
-      { l: 'Partie 1', v: ext.partie_1_nom },
-      { l: 'Partie 2', v: ext.partie_2_nom },
-      { l: 'Montant', v: ext.montant_contrat ? ext.montant_contrat + ' €' : null, big: true },
-      { l: 'Fin contrat', v: ext.date_fin },
-    ];
-    else if (type === 'BON_COMMANDE') fields = [
-      { l: 'Numéro BC', v: ext.numero_bc },
-      { l: 'Fournisseur', v: ext.fournisseur_nom },
-      { l: 'Date commande', v: ext.date_commande },
-      { l: 'Livraison', v: ext.date_livraison_souhaitee },
-      { l: 'Montant TTC', v: ext.montant_ttc ? ext.montant_ttc + ' €' : null, big: true },
-      { l: 'Priorité', v: ext.priorite },
-    ];
-    else if (type === 'EMAIL') fields = [
-      { l: 'Expéditeur', v: ext.expediteur },
-      { l: 'Email', v: ext.expediteur_email },
-      { l: 'Sujet', v: ext.sujet },
-      { l: 'Catégorie', v: ext.categorie },
-      { l: 'Sentiment', v: ext.sentiment },
-      { l: 'Priorité', v: ext.priorite },
-    ];
-
-    document.getElementById('demoOutput').innerHTML = `
-      <div class="demo-output-label">Résultat de l'analyse</div>
-      <div class="output-result">
-        <div class="result-header">
-          <div class="result-type">Document <em>${TYPE_LABELS[type] || type}</em></div>
-          <div class="result-confidence">Confiance <strong>${conf}%</strong></div>
-        </div>
-        <div class="result-fields">
-          ${fields.map(f => `<div class="result-field"><div class="result-field-label">${f.l}</div><div class="result-field-value ${f.big ? 'big' : ''}">${f.v || '—'}</div></div>`).join('')}
-        </div>
-        ${doc.resume ? `<div class="result-resume">${doc.resume}</div>` : ''}
-        <div class="result-time"><span>Traité en ${elapsed}s</span><span>Sauvegardé · 3 destinations</span></div>
-      </div>
-    `;
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('docInput').addEventListener('keydown', (e) => { if (e.ctrlKey && e.key === 'Enter') analyzeDoc(); });
+});
 </script>
 </body>
 </html>
