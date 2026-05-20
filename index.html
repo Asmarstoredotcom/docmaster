@@ -1,1026 +1,475 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DocMaster — Intelligence Documentaire d'Élite</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500&family=Inter+Tight:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #f4f1ea;
-    --bg-dark: #0a0a0a;
-    --paper: #efeae0;
-    --ink: #0a0a0a;
-    --ink-soft: #2a2a2a;
-    --ink-mute: #6a6862;
-    --accent: #c8392c;
-    --line: rgba(10,10,10,0.12);
-    --line-soft: rgba(10,10,10,0.06);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Inter Tight', sans-serif;
-    font-weight: 300;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-    opacity: 0.08;
-    pointer-events: none;
-    z-index: 1000;
-    mix-blend-mode: multiply;
-  }
-
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 24px 48px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(244, 241, 234, 0.85);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .nav-brand { display: flex; align-items: center; gap: 14px; }
-  .brand-mark {
-    width: 38px; height: 38px;
-    background: var(--ink); color: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Fraunces', serif; font-weight: 500; font-size: 18px;
-    border-radius: 2px;
-  }
-  .brand-text { font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; letter-spacing: -0.02em; }
-
-  .nav-links { display: flex; gap: 40px; align-items: center; }
-  .nav-link {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--ink-mute); text-decoration: none; transition: color 0.2s;
-  }
-  .nav-link:hover { color: var(--ink); }
-
-  .nav-cta {
-    padding: 10px 20px; background: var(--ink); color: var(--bg);
-    text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-    border-radius: 2px; transition: all 0.2s;
-  }
-  .nav-cta:hover { background: var(--accent); }
-
-  .hero {
-    padding: 160px 48px 80px;
-    max-width: 1400px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  .hero-meta {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 40px;
-    margin-bottom: 80px;
-    align-items: end;
-    padding-bottom: 40px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .meta-left, .meta-right {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--ink-mute); line-height: 1.7;
-  }
-  .meta-right { text-align: right; }
-  .meta-center {
-    font-family: 'Fraunces', serif;
-    font-size: 13px; font-style: italic;
-    color: var(--ink-soft); letter-spacing: 0.02em;
-  }
-
-  .hero-title {
-    font-family: 'Fraunces', serif;
-    font-weight: 300;
-    font-size: clamp(64px, 10vw, 160px);
-    line-height: 0.9;
-    letter-spacing: -0.04em;
-    margin-bottom: 60px;
-    color: var(--ink);
-  }
-  .hero-title em { font-style: italic; font-weight: 400; color: var(--accent); }
-  .hero-title .stroke {
-    -webkit-text-stroke: 1px var(--ink);
-    color: transparent; font-style: italic;
-  }
-
-  .hero-bottom {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 80px;
-    align-items: end;
-  }
-
-  .hero-lede {
-    font-family: 'Fraunces', serif;
-    font-size: 24px; font-weight: 300; line-height: 1.4;
-    color: var(--ink-soft); max-width: 520px; letter-spacing: -0.01em;
-  }
-  .hero-lede strong { font-weight: 500; color: var(--ink); }
-
-  .hero-cta-block { display: flex; flex-direction: column; gap: 20px; }
-
-  .primary-btn {
-    display: inline-flex; align-items: center; justify-content: space-between;
-    padding: 22px 32px; background: var(--ink); color: var(--bg);
-    text-decoration: none;
-    font-family: 'Inter Tight', sans-serif;
-    font-size: 15px; font-weight: 400; letter-spacing: 0.02em;
-    transition: all 0.3s; border-radius: 2px; gap: 32px;
-    cursor: pointer; border: none;
-  }
-  .primary-btn:hover { background: var(--accent); transform: translateY(-2px); }
-  .primary-btn .arrow {
-    font-family: 'Fraunces', serif;
-    font-size: 22px; transition: transform 0.3s;
-  }
-  .primary-btn:hover .arrow { transform: translateX(6px); }
-
-  .secondary-text {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--ink-mute);
-  }
-
-  .marquee {
-    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-    overflow: hidden; background: var(--ink); color: var(--bg);
-    padding: 22px 0;
-  }
-  .marquee-inner {
-    display: flex; gap: 60px;
-    animation: scroll 40s linear infinite; white-space: nowrap;
-  }
-  @keyframes scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-  .marquee-item {
-    font-family: 'Fraunces', serif;
-    font-size: 22px; font-style: italic; font-weight: 300;
-    display: flex; align-items: center; gap: 60px;
-  }
-  .marquee-item::after {
-    content: '✦'; font-size: 14px; color: var(--accent); font-style: normal;
-  }
-
-  .demo { padding: 120px 48px; max-width: 1400px; margin: 0 auto; }
-
-  .section-label {
-    display: flex; align-items: center; gap: 16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--ink-mute); margin-bottom: 40px;
-  }
-  .section-label::before {
-    content: ''; width: 32px; height: 1px; background: var(--ink-mute);
-  }
-
-  .section-title {
-    font-family: 'Fraunces', serif;
-    font-weight: 300;
-    font-size: clamp(40px, 5vw, 64px);
-    line-height: 1.05; letter-spacing: -0.03em;
-    margin-bottom: 60px; max-width: 900px;
-  }
-  .section-title em { font-style: italic; color: var(--accent); }
-
-  .demo-container {
-    background: var(--ink); color: var(--bg);
-    border-radius: 4px; overflow: hidden;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.15);
-    position: relative;
-  }
-
-  .demo-header {
-    padding: 20px 28px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .demo-dots { display: flex; gap: 6px; }
-  .demo-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); }
-  .demo-url {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.05em;
-  }
-
-  .demo-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: 540px;
-  }
-
-  .demo-input {
-    padding: 40px;
-    border-right: 1px solid rgba(255,255,255,0.08);
-    display: flex; flex-direction: column;
-  }
-
-  .demo-input-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: rgba(255,255,255,0.4);
-    letter-spacing: 0.15em; text-transform: uppercase;
-    margin-bottom: 16px;
-  }
-
-  .demo-textarea {
-    flex: 1; background: transparent;
-    border: 1px solid rgba(255,255,255,0.1);
-    color: var(--bg); padding: 20px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px; line-height: 1.7;
-    resize: none; outline: none; border-radius: 2px;
-    transition: border-color 0.2s;
-  }
-  .demo-textarea:focus { border-color: var(--accent); }
-  .demo-textarea::placeholder { color: rgba(255,255,255,0.25); }
-
-  .demo-samples { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
-
-  .sample-btn {
-    padding: 6px 12px; background: transparent;
-    border: 1px solid rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.6);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
-    cursor: pointer; border-radius: 2px; transition: all 0.2s;
-  }
-  .sample-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-  .demo-run {
-    margin-top: 20px; padding: 16px 24px;
-    background: var(--bg); color: var(--ink); border: none;
-    font-family: 'Inter Tight', sans-serif;
-    font-size: 14px; font-weight: 500; letter-spacing: 0.02em;
-    cursor: pointer; border-radius: 2px;
-    display: flex; align-items: center; justify-content: space-between;
-    transition: all 0.2s;
-  }
-  .demo-run:hover { background: var(--accent); color: var(--bg); }
-  .demo-run:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .demo-output {
-    padding: 40px; display: flex; flex-direction: column; position: relative;
-  }
-  .demo-output-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: rgba(255,255,255,0.4);
-    letter-spacing: 0.15em; text-transform: uppercase;
-    margin-bottom: 16px;
-  }
-
-  .output-empty {
-    flex: 1;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; color: rgba(255,255,255,0.3);
-    font-family: 'Fraunces', serif; font-style: italic;
-    font-size: 18px; line-height: 1.6;
-  }
-  .output-empty::before {
-    content: ''; width: 60px; height: 60px;
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 50%; margin-bottom: 24px;
-    background-image: radial-gradient(circle, rgba(200,57,44,0.2) 0%, transparent 70%);
-  }
-
-  .output-loading {
-    flex: 1;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 24px;
-  }
-  .loader {
-    width: 40px; height: 40px;
-    border: 2px solid rgba(255,255,255,0.1);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loader-text {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-  }
-
-  .output-result { flex: 1; overflow-y: auto; }
-
-  .result-header {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 24px; padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-  }
-  .result-type {
-    font-family: 'Fraunces', serif;
-    font-size: 28px; font-weight: 400; color: var(--bg);
-  }
-  .result-type em { font-style: italic; color: var(--accent); }
-  .result-confidence {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 0.08em;
-  }
-  .result-confidence strong { color: var(--accent); font-weight: 500; margin-left: 6px; }
-
-  .result-fields {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 16px 24px; margin-bottom: 24px;
-  }
-  .result-field {
-    padding-bottom: 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .result-field-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; color: rgba(255,255,255,0.4);
-    letter-spacing: 0.12em; text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .result-field-value {
-    font-family: 'Inter Tight', sans-serif;
-    font-size: 14px; color: var(--bg); font-weight: 400;
-  }
-  .result-field-value.big {
-    font-family: 'Fraunces', serif;
-    font-size: 22px; font-weight: 400; color: var(--accent);
-  }
-
-  .result-resume {
-    background: rgba(255,255,255,0.04);
-    border-left: 2px solid var(--accent);
-    padding: 16px 20px;
-    font-family: 'Fraunces', serif; font-style: italic;
-    font-size: 14px; line-height: 1.6;
-    color: rgba(255,255,255,0.85);
-  }
-
-  .result-time {
-    margin-top: 20px; padding-top: 16px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    display: flex; justify-content: space-between;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; color: rgba(255,255,255,0.4);
-    letter-spacing: 0.1em; text-transform: uppercase;
-  }
-
-  .metrics {
-    padding: 120px 48px; max-width: 1400px; margin: 0 auto;
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
-    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-  }
-  .metric {
-    padding: 50px 30px;
-    border-right: 1px solid var(--line);
-    position: relative;
-  }
-  .metric:last-child { border-right: none; }
-  .metric-num {
-    font-family: 'Fraunces', serif;
-    font-size: 90px; font-weight: 300; line-height: 1;
-    letter-spacing: -0.03em; margin-bottom: 16px;
-  }
-  .metric-num em { font-style: italic; color: var(--accent); }
-  .metric-num sup {
-    font-size: 30px; color: var(--ink-mute);
-    vertical-align: super; font-weight: 300;
-  }
-  .metric-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--ink-mute); line-height: 1.6;
-  }
-
-  .features { padding: 120px 48px; max-width: 1400px; margin: 0 auto; }
-  .features-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 0;
-    border-top: 1px solid var(--line);
-  }
-  .feature {
-    padding: 50px 40px 50px 0;
-    border-bottom: 1px solid var(--line);
-    border-right: 1px solid var(--line);
-    position: relative;
-  }
-  .feature:nth-child(2n) { border-right: none; padding-left: 40px; padding-right: 0; }
-  .feature:nth-child(1), .feature:nth-child(2) { padding-top: 50px; }
-
-  .feature-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: var(--accent);
-    letter-spacing: 0.1em; margin-bottom: 24px;
-  }
-  .feature-title {
-    font-family: 'Fraunces', serif;
-    font-size: 36px; font-weight: 400; line-height: 1.1;
-    letter-spacing: -0.02em; margin-bottom: 16px;
-  }
-  .feature-title em { font-style: italic; }
-  .feature-desc {
-    font-size: 15px; line-height: 1.6;
-    color: var(--ink-soft); max-width: 480px;
-  }
-
-  .quote { padding: 160px 48px; max-width: 1100px; margin: 0 auto; text-align: center; }
-  .quote-mark {
-    font-family: 'Fraunces', serif;
-    font-size: 120px; font-style: italic; line-height: 0.5;
-    color: var(--accent); margin-bottom: 30px;
-  }
-  .quote-text {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(32px, 4vw, 48px);
-    font-weight: 300; line-height: 1.25; letter-spacing: -0.02em;
-    color: var(--ink); margin-bottom: 40px;
-  }
-  .quote-text em { font-style: italic; color: var(--accent); }
-  .quote-attr {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--ink-mute);
-  }
-
-  .pricing { padding: 120px 48px; max-width: 1400px; margin: 0 auto; }
-  .pricing-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
-    margin-top: 60px; border: 1px solid var(--ink);
-  }
-  .plan {
-    padding: 50px 40px;
-    border-right: 1px solid var(--line);
-    background: var(--paper);
-    transition: background 0.3s;
-  }
-  .plan:last-child { border-right: none; }
-  .plan.featured { background: var(--ink); color: var(--bg); }
-
-  .plan-name {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--ink-mute); margin-bottom: 24px;
-  }
-  .plan.featured .plan-name { color: var(--accent); }
-
-  .plan-price {
-    font-family: 'Fraunces', serif;
-    font-size: 64px; font-weight: 300; line-height: 1;
-    letter-spacing: -0.03em; margin-bottom: 4px;
-  }
-
-  .plan-period {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: var(--ink-mute);
-    letter-spacing: 0.1em; text-transform: uppercase;
-    margin-bottom: 32px;
-  }
-  .plan.featured .plan-period { color: rgba(255,255,255,0.5); }
-
-  .plan-features { list-style: none; margin-bottom: 32px; }
-  .plan-features li {
-    padding: 14px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 14px; line-height: 1.5;
-    display: flex; align-items: flex-start; gap: 12px;
-  }
-  .plan.featured .plan-features li { border-bottom-color: rgba(255,255,255,0.08); }
-  .plan-features li::before {
-    content: '→'; color: var(--accent); flex-shrink: 0;
-    font-family: 'Fraunces', serif;
-  }
-
-  .plan-btn {
-    display: block; text-align: center;
-    padding: 18px; background: transparent;
-    border: 1px solid var(--ink); color: var(--ink);
-    text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
-    transition: all 0.2s; cursor: pointer; width: 100%;
-  }
-  .plan-btn:hover { background: var(--ink); color: var(--bg); }
-  .plan.featured .plan-btn {
-    border-color: var(--accent); background: var(--accent); color: var(--bg);
-  }
-  .plan.featured .plan-btn:hover {
-    background: var(--bg); color: var(--ink); border-color: var(--bg);
-  }
-
-  footer {
-    background: var(--ink); color: var(--bg);
-    padding: 80px 48px 40px;
-  }
-  .footer-content {
-    max-width: 1400px; margin: 0 auto;
-    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px;
-    margin-bottom: 80px;
-  }
-  .footer-big {
-    font-family: 'Fraunces', serif;
-    font-size: 48px; font-weight: 300; line-height: 1.1;
-    letter-spacing: -0.02em; max-width: 500px;
-  }
-  .footer-big em { font-style: italic; color: var(--accent); }
-
-  .footer-col h4 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
-    color: rgba(255,255,255,0.4); margin-bottom: 20px;
-  }
-  .footer-col a {
-    display: block; color: var(--bg); text-decoration: none;
-    padding: 8px 0; font-size: 14px; transition: color 0.2s;
-  }
-  .footer-col a:hover { color: var(--accent); }
-
-  .footer-bottom {
-    max-width: 1400px; margin: 0 auto;
-    padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);
-    display: flex; justify-content: space-between;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.1em;
-  }
-
-  @media (max-width: 1024px) {
-    .metrics { grid-template-columns: repeat(2, 1fr); }
-    .metric { border-right: 1px solid var(--line) !important; }
-    .metric:nth-child(2n) { border-right: none !important; }
-    .demo-body { grid-template-columns: 1fr; }
-    .demo-input { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .result-fields { grid-template-columns: 1fr; }
-    .footer-content { grid-template-columns: 1fr 1fr; }
-  }
-
-  @media (max-width: 768px) {
-    nav { padding: 20px 24px; }
-    .nav-links { display: none; }
-    .hero { padding: 130px 24px 60px; }
-    .hero-meta { grid-template-columns: 1fr; gap: 20px; }
-    .meta-right { text-align: left; }
-    .hero-bottom { grid-template-columns: 1fr; gap: 40px; }
-    .demo, .features, .metrics, .pricing, .quote { padding: 80px 24px; }
-    .features-grid { grid-template-columns: 1fr; }
-    .feature { border-right: none; padding: 40px 0; }
-    .pricing-grid { grid-template-columns: 1fr; }
-    .plan { border-right: none; border-bottom: 1px solid var(--line); }
-    .footer-content { grid-template-columns: 1fr; gap: 40px; }
-    .footer-big { font-size: 32px; }
-    .footer-bottom { flex-direction: column; gap: 12px; }
-  }
-</style>
-</head>
-<body>
-
-<nav>
-  <div class="nav-brand">
-    <div class="brand-mark">D</div>
-    <div class="brand-text">DocMaster</div>
-  </div>
-  <div class="nav-links">
-    <a href="#demo" class="nav-link">Démonstration</a>
-    <a href="#features" class="nav-link">Capacités</a>
-    <a href="#pricing" class="nav-link">Tarifs</a>
-    <a href="#contact" class="nav-cta">Réserver une démo</a>
-  </div>
-</nav>
-
-<section class="hero">
-  <div class="hero-meta">
-    <div class="meta-left">Volume N°01<br>Édition 2026</div>
-    <div class="meta-center">"L'intelligence documentaire,<br>réinventée pour l'entreprise moderne."</div>
-    <div class="meta-right">Paris — Lyon<br>Disponible 24/7</div>
-  </div>
-
-  <h1 class="hero-title">
-    Vos documents,<br>
-    <em>analysés</em> en<br>
-    <span class="stroke">3 secondes</span>.
-  </h1>
-
-  <div class="hero-bottom">
-    <p class="hero-lede">
-      DocMaster est un agent d'intelligence artificielle qui extrait, classifie et structure vos factures, contrats, bons de commande et emails — <strong>automatiquement, sans intervention humaine</strong>.
-    </p>
-    <div class="hero-cta-block">
-      <a href="#demo" class="primary-btn">
-        Tester gratuitement maintenant
-        <span class="arrow">→</span>
-      </a>
-      <span class="secondary-text">Aucune installation — Résultat immédiat</span>
-    </div>
-  </div>
-</section>
-
-<div class="marquee">
-  <div class="marquee-inner">
-    <span class="marquee-item">Factures fournisseurs</span>
-    <span class="marquee-item">Contrats commerciaux</span>
-    <span class="marquee-item">Bons de commande</span>
-    <span class="marquee-item">Emails professionnels</span>
-    <span class="marquee-item">Devis & propositions</span>
-    <span class="marquee-item">Factures fournisseurs</span>
-    <span class="marquee-item">Contrats commerciaux</span>
-    <span class="marquee-item">Bons de commande</span>
-    <span class="marquee-item">Emails professionnels</span>
-    <span class="marquee-item">Devis & propositions</span>
-  </div>
-</div>
-
-<section class="demo" id="demo">
-  <div class="section-label">01 — Démonstration en direct</div>
-  <h2 class="section-title">Collez un document, observez l'<em>extraction</em>.</h2>
-
-  <div class="demo-container">
-    <div class="demo-header">
-      <div class="demo-dots">
-        <span class="demo-dot"></span>
-        <span class="demo-dot"></span>
-        <span class="demo-dot"></span>
-      </div>
-      <div class="demo-url">docmaster.ai / live-demo</div>
-    </div>
-
-    <div class="demo-body">
-      <div class="demo-input">
-        <div class="demo-input-label">Document source</div>
-        <textarea id="demoInput" class="demo-textarea" placeholder="Collez ici votre document — facture, contrat, bon de commande, email...&#10;&#10;Ou choisissez un exemple ci-dessous pour tester instantanément."></textarea>
-        <div class="demo-samples">
-          <button class="sample-btn" onclick="loadSample('facture')">Exemple Facture</button>
-          <button class="sample-btn" onclick="loadSample('contrat')">Exemple Contrat</button>
-          <button class="sample-btn" onclick="loadSample('bc')">Exemple BC</button>
-          <button class="sample-btn" onclick="loadSample('email')">Exemple Email</button>
-        </div>
-        <button class="demo-run" id="runBtn" onclick="runDemo()">
-          Lancer l'analyse
-          <span>→</span>
-        </button>
-      </div>
-
-      <div class="demo-output" id="demoOutput">
-        <div class="demo-output-label">Résultat de l'analyse</div>
-        <div class="output-empty">En attente d'un document.<br>L'analyse apparaîtra ici.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="metrics">
-  <div class="metric">
-    <div class="metric-num"><em>2,6</em><sup>s</sup></div>
-    <div class="metric-label">Temps moyen<br>de traitement</div>
-  </div>
-  <div class="metric">
-    <div class="metric-num">98<sup>%</sup></div>
-    <div class="metric-label">Précision<br>d'extraction</div>
-  </div>
-  <div class="metric">
-    <div class="metric-num"><em>4</em></div>
-    <div class="metric-label">Types de documents<br>pris en charge</div>
-  </div>
-  <div class="metric">
-    <div class="metric-num">24<sup>/7</sup></div>
-    <div class="metric-label">Disponibilité<br>garantie</div>
-  </div>
-</section>
-
-<section class="features" id="features">
-  <div class="section-label">02 — Capacités</div>
-  <h2 class="section-title">Conçu pour les exigences les plus <em>strictes</em>.</h2>
-
-  <div class="features-grid">
-    <div class="feature">
-      <div class="feature-num">⟶ 01</div>
-      <h3 class="feature-title">Classification <em>intelligente</em></h3>
-      <p class="feature-desc">L'agent identifie automatiquement le type de document avec un taux de confiance supérieur à 95%. Aucun paramétrage manuel requis.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-num">⟶ 02</div>
-      <h3 class="feature-title">Extraction <em>structurée</em></h3>
-      <p class="feature-desc">Numéros, montants, dates, parties prenantes, échéances — toutes les données critiques sont extraites au format exploitable.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-num">⟶ 03</div>
-      <h3 class="feature-title">Multi-<em>destinations</em></h3>
-      <p class="feature-desc">Sauvegarde simultanée dans Google Sheets, Notion, Airtable, ou votre CRM. Une seule analyse, plusieurs systèmes alimentés.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-num">⟶ 04</div>
-      <h3 class="feature-title">Confidentialité <em>absolue</em></h3>
-      <p class="feature-desc">Aucune donnée stockée. Traitement chiffré de bout en bout. Conforme RGPD. Vos documents restent vos documents.</p>
-    </div>
-  </div>
-</section>
-
-<section class="quote">
-  <div class="quote-mark">"</div>
-  <p class="quote-text">
-    Une heure de saisie quotidienne <em>éliminée</em>.<br>
-    Un retour sur investissement immédiat.
-  </p>
-  <div class="quote-attr">— Témoignage client, secteur comptabilité</div>
-</section>
-
-<section class="pricing" id="pricing">
-  <div class="section-label">03 — Tarification</div>
-  <h2 class="section-title">Un service en <em>location</em>. Sans engagement.</h2>
-
-  <div class="pricing-grid">
-    <div class="plan">
-      <div class="plan-name">Starter</div>
-      <div class="plan-price">490<span style="font-size: 24px; color: var(--ink-mute);">€</span></div>
-      <div class="plan-period">par mois</div>
-      <ul class="plan-features">
-        <li>Jusqu'à 100 documents/mois</li>
-        <li>1 type de document</li>
-        <li>1 destination (Sheets ou Notion)</li>
-        <li>Support email</li>
-      </ul>
-      <a href="#contact" class="plan-btn">Commencer</a>
-    </div>
-
-    <div class="plan featured">
-      <div class="plan-name">Professional</div>
-      <div class="plan-price">990<span style="font-size: 24px; color: rgba(255,255,255,0.5);">€</span></div>
-      <div class="plan-period">par mois</div>
-      <ul class="plan-features">
-        <li>Jusqu'à 500 documents/mois</li>
-        <li>Tous types de documents</li>
-        <li>3 destinations simultanées</li>
-        <li>Support prioritaire</li>
-        <li>Personnalisation des extractions</li>
-      </ul>
-      <a href="#contact" class="plan-btn">Choisir Pro</a>
-    </div>
-
-    <div class="plan">
-      <div class="plan-name">Enterprise</div>
-      <div class="plan-price" style="font-size: 48px;">Sur devis</div>
-      <div class="plan-period">facturation annuelle</div>
-      <ul class="plan-features">
-        <li>Volume illimité</li>
-        <li>Intégrations CRM/ERP</li>
-        <li>SLA garanti 99,9%</li>
-        <li>Account manager dédié</li>
-        <li>Formation équipe incluse</li>
-      </ul>
-      <a href="#contact" class="plan-btn">Nous contacter</a>
-    </div>
-  </div>
-</section>
-
-<footer id="contact">
-  <div class="footer-content">
-    <div>
-      <div class="footer-big">
-        Prêt à <em>automatiser</em><br>
-        votre gestion documentaire ?
-      </div>
-      <a href="mailto:contact@asmarstore.com" class="primary-btn" style="margin-top: 40px; background: var(--accent);">
-        Réserver une démonstration
-        <span class="arrow">→</span>
-      </a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Produit</h4>
-      <a href="#demo">Démonstration</a>
-      <a href="#features">Capacités</a>
-      <a href="#pricing">Tarifs</a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Entreprise</h4>
-      <a href="#">À propos</a>
-      <a href="#">Sécurité</a>
-      <a href="#">RGPD</a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Contact</h4>
-      <a href="mailto:contact@asmarstore.com">contact@asmarstore.com</a>
-      <a href="#">Paris, France</a>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <div>DocMaster © 2026 — Tous droits réservés</div>
-    <div>Powered by Claude AI</div>
-  </div>
-</footer>
-
-<script>
-  const WEBHOOK_URL = 'https://participating-foam-extraordinary-ranges.trycloudflare.com/webhook/docmaster';
-
-  const SAMPLES = {
-    facture: `FACTURE N°FAC-2026-0047
-Date d'émission : 12/05/2026
-Date d'échéance : 12/06/2026
-
-FOURNISSEUR : SARL TechPro Solutions
-SIRET : 452 891 234 00019
-CLIENT : SAS Dupont & Associés
-
-Développement logiciel sur mesure : 6 500€
-Formation utilisateurs : 1 200€
-Maintenance : 900€
-
-Sous-total HT : 8 600,00 €
-TVA 20% : 1 720,00 €
-TOTAL TTC : 10 320,00 €
-Mode de paiement : Virement bancaire`,
-
-    contrat: `CONTRAT DE PRESTATION N°CTR-2026-012
-Entre SARL WebAgency (SIRET 321 654 987) et SAS Martin Retail (SIRET 654 321 789)
-Objet : Refonte site e-commerce
-Durée : 6 mois du 01/06/2026 au 30/11/2026
-Montant : 24 000 € HT en 3 versements
-Reconduction : Non tacite
-Préavis résiliation : 30 jours
-Pénalités : 1% par semaine de retard
-Juridiction : Tribunal de Commerce de Paris
-Signé le 28/05/2026`,
-
-    bc: `BON DE COMMANDE N°BC-2026-0892
-Émetteur : SAS Fournitures Pro
-Fournisseur : SARL Bureau Expert
-Date : 19/05/2026
-Livraison souhaitée : 26/05/2026 — URGENT
-
-12x Chaises ergonomiques @ 320€ = 3 840€
-6x Bureaux réglables @ 580€ = 3 480€
-12x Caissons mobiles @ 145€ = 1 740€
-2x Fauteuils direction @ 890€ = 1 780€
-
-Total HT : 10 840 €
-TVA : 2 168 €
-Total TTC : 13 008 €
-Conditions : 30 jours fin de mois`,
-
-    email: `De : pierre.rousseau@clientimportant.fr
-À : contact@asmarstore.com
-Date : 19/05/2026 09:47
-Objet : URGENT - Problème facturation + nouveau projet
-
-Bonjour,
-
-Premièrement, votre facture FAC-2026-0031 ne correspond pas au devis. Pourriez-vous émettre une rectificative avant le 25/05 ?
-
-Deuxièmement, nous lançons un projet de digitalisation RH pour septembre 2026. Budget : 30 000 à 50 000€. Réunion possible la semaine du 26 mai ?
-
-Cordialement,
-Pierre Rousseau
-DAF — ClientImportant SAS`
-  };
-
-  const TYPE_LABELS = {
-    'FACTURE': 'Facture',
-    'CONTRAT': 'Contrat',
-    'BON_COMMANDE': 'Bon de Commande',
-    'EMAIL': 'Email',
-    'AUTRE': 'Document'
-  };
-
-  function loadSample(type) {
-    document.getElementById('demoInput').value = SAMPLES[type];
-  }
-
-  async function runDemo() {
-    const input = document.getElementById('demoInput').value.trim();
-    const output = document.getElementById('demoOutput');
-    const btn = document.getElementById('runBtn');
-
-    if (!input) {
-      output.innerHTML = `
-        <div class="demo-output-label">Résultat de l'analyse</div>
-        <div class="output-empty" style="color: #c8392c;">Veuillez fournir un document à analyser.</div>
-      `;
-      return;
+{
+  "name": "DocMaster IA — Agent Elite Traitement Documents",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "docmaster",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "📥 Webhook Réception Document",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 400],
+      "webhookId": "docmaster-webhook-001"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst body = input.body || input;\n\nconst documentText = body.document_text || body.email_body || '';\nconst fileData = body.file_base64 || '';\nconst fileUrl = body.file_url || '';\n\nif (!documentText && !fileData && !fileUrl) {\n  throw new Error('Champ requis manquant: document_text, file_base64, ou file_url');\n}\n\nconst processingId = 'proc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);\n\nreturn [{\n  json: {\n    processingId,\n    fileData: fileData,\n    fileUrl: fileUrl,\n    fileName: body.file_name || 'document_' + Date.now() + '.pdf',\n    clientId: body.client_id || 'default',\n    clientName: body.client_name || 'Client inconnu',\n    emailSubject: body.email_subject || '',\n    documentText: documentText.substring(0, 50000),\n    receivedAt: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "prepare-data",
+      "name": "🔧 Préparation & Validation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst prompt = `Tu es un expert en classification de documents d'entreprise. Analyse le document et reponds UNIQUEMENT en JSON valide, sans markdown, sans backticks, sans explication.\n\nNom fichier: ${data.fileName}\nSujet email: ${data.emailSubject}\nContenu: ${data.documentText}\n\nReponds avec ce JSON exact (choisis UN seul type parmi FACTURE, CONTRAT, EMAIL, BON_COMMANDE, AUTRE):\n{\"type\": \"FACTURE\", \"confidence\": 0.95, \"langue\": \"fr\", \"urgence\": \"normale\", \"resume_court\": \"resume en 1 phrase\"}`;\n\nconst payload = {\n  model: 'claude-haiku-4-5-20251001',\n  max_tokens: 512,\n  temperature: 0,\n  messages: [\n    { role: 'user', content: prompt }\n  ]\n};\n\nreturn [{\n  json: {\n    ...data,\n    apiPayload: JSON.stringify(payload)\n  }\n}];"
+      },
+      "id": "build-classification-prompt",
+      "name": "📝 Build Classification Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.apiPayload }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "classify-document",
+      "name": "🧠 Classification IA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 400],
+      "credentials": {
+        "httpHeaderAuth": {
+          "name": "Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\n\nlet classificationText = '';\nif (response.content && Array.isArray(response.content)) {\n  const textBlock = response.content.find(b => b.type === 'text');\n  classificationText = textBlock ? textBlock.text : '';\n} else if (typeof response.content === 'string') {\n  classificationText = response.content;\n}\n\nconst cleaned = classificationText\n  .replace(/```json/gi, '')\n  .replace(/```/g, '')\n  .trim();\n\nlet classification = {};\ntry {\n  classification = JSON.parse(cleaned);\n} catch(e) {\n  classification = {\n    type: 'AUTRE',\n    confidence: 0.5,\n    langue: 'fr',\n    urgence: 'normale',\n    resume_court: 'Document non classifie automatiquement'\n  };\n}\n\nconst validTypes = ['FACTURE', 'CONTRAT', 'EMAIL', 'BON_COMMANDE', 'AUTRE'];\nconst docType = validTypes.includes(classification.type) ? classification.type : 'AUTRE';\n\nconst prevData = $('🔧 Préparation & Validation').first().json;\n\nreturn [{\n  json: {\n    ...prevData,\n    classification,\n    docType,\n    confidence: classification.confidence || 0.5,\n    urgence: classification.urgence || 'normale',\n    resumeCourt: classification.resume_court || '',\n    classifiedAt: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "parse-classification",
+      "name": "📊 Parse Classification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "typeValidation": "loose" },
+                "conditions": [{ "leftValue": "={{ $json.docType }}", "rightValue": "FACTURE", "operator": { "type": "string", "operation": "equals" } }],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Facture"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "typeValidation": "loose" },
+                "conditions": [{ "leftValue": "={{ $json.docType }}", "rightValue": "CONTRAT", "operator": { "type": "string", "operation": "equals" } }],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Contrat"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "typeValidation": "loose" },
+                "conditions": [{ "leftValue": "={{ $json.docType }}", "rightValue": "BON_COMMANDE", "operator": { "type": "string", "operation": "equals" } }],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "BonCommande"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "typeValidation": "loose" },
+                "conditions": [{ "leftValue": "={{ $json.docType }}", "rightValue": "EMAIL", "operator": { "type": "string", "operation": "equals" } }],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Email"
+            }
+          ]
+        },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "id": "route-document",
+      "name": "🔀 Routage par type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1340, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst prompt = `Tu es un expert comptable. Extrais toutes les informations de cette facture fournisseur.\n\nTexte: ${data.documentText}\nFichier: ${data.fileName}\n\nReponds UNIQUEMENT en JSON valide sans markdown:\n{\"numero_facture\": \"\", \"date_facture\": \"\", \"date_echeance\": \"\", \"fournisseur_nom\": \"\", \"fournisseur_siret\": \"\", \"fournisseur_adresse\": \"\", \"fournisseur_email\": \"\", \"client_nom\": \"\", \"montant_ht\": 0, \"tva_taux\": 20, \"montant_tva\": 0, \"montant_ttc\": 0, \"devise\": \"EUR\", \"lignes_detail\": [], \"mode_paiement\": \"\", \"iban\": \"\", \"statut\": \"A_PAYER\", \"notes\": \"\"}`;\n\nconst payload = JSON.stringify({\n  model: 'claude-haiku-4-5-20251001',\n  max_tokens: 2048,\n  temperature: 0,\n  messages: [{ role: 'user', content: prompt }]\n});\n\nreturn [{ json: { ...data, apiPayload: payload } }];"
+      },
+      "id": "build-facture-prompt",
+      "name": "📝 Build Facture Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 140]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst prompt = `Tu es un expert juridique. Analyse ce contrat et extrais les informations cles.\n\nTexte: ${data.documentText}\nFichier: ${data.fileName}\n\nReponds UNIQUEMENT en JSON valide sans markdown:\n{\"titre_contrat\": \"\", \"type_contrat\": \"\", \"date_signature\": \"\", \"date_debut\": \"\", \"date_fin\": \"\", \"duree\": \"\", \"reconduction_tacite\": false, \"preavis_resiliation\": \"\", \"partie_1_nom\": \"\", \"partie_1_siret\": \"\", \"partie_2_nom\": \"\", \"partie_2_siret\": \"\", \"montant_contrat\": 0, \"periodicite_paiement\": \"\", \"clauses_importantes\": [], \"obligations_partie_1\": [], \"obligations_partie_2\": [], \"penalites\": \"\", \"juridiction\": \"\", \"statut\": \"ACTIF\", \"alertes\": [], \"resume\": \"\"}`;\n\nconst payload = JSON.stringify({\n  model: 'claude-haiku-4-5-20251001',\n  max_tokens: 3000,\n  temperature: 0,\n  messages: [{ role: 'user', content: prompt }]\n});\n\nreturn [{ json: { ...data, apiPayload: payload } }];"
+      },
+      "id": "build-contrat-prompt",
+      "name": "📝 Build Contrat Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst prompt = `Tu es un expert en achats. Extrais les informations de ce bon de commande.\n\nTexte: ${data.documentText}\nFichier: ${data.fileName}\n\nReponds UNIQUEMENT en JSON valide sans markdown:\n{\"numero_bc\": \"\", \"date_commande\": \"\", \"date_livraison_souhaitee\": \"\", \"fournisseur_nom\": \"\", \"fournisseur_contact\": \"\", \"acheteur_nom\": \"\", \"acheteur_service\": \"\", \"adresse_livraison\": \"\", \"lignes_commande\": [], \"montant_ht\": 0, \"montant_tva\": 0, \"montant_ttc\": 0, \"conditions_paiement\": \"\", \"statut\": \"EN_ATTENTE\", \"priorite\": \"normale\", \"notes\": \"\"}`;\n\nconst payload = JSON.stringify({\n  model: 'claude-haiku-4-5-20251001',\n  max_tokens: 2048,\n  temperature: 0,\n  messages: [{ role: 'user', content: prompt }]\n});\n\nreturn [{ json: { ...data, apiPayload: payload } }];"
+      },
+      "id": "build-bc-prompt",
+      "name": "📝 Build BC Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst prompt = `Tu es un assistant de direction. Analyse cet email professionnel.\n\nSujet: ${data.emailSubject}\nContenu: ${data.documentText}\n\nReponds UNIQUEMENT en JSON valide sans markdown:\n{\"expediteur\": \"\", \"expediteur_email\": \"\", \"destinataires\": [], \"sujet\": \"\", \"date_reception\": \"\", \"categorie\": \"COMMERCIAL\", \"sentiment\": \"neutre\", \"action_requise\": true, \"action_description\": \"\", \"deadline_action\": \"\", \"priorite\": \"normale\", \"resume\": \"\", \"points_cles\": [], \"reponse_suggere\": \"\"}`;\n\nconst payload = JSON.stringify({\n  model: 'claude-haiku-4-5-20251001',\n  max_tokens: 1500,\n  temperature: 0,\n  messages: [{ role: 'user', content: prompt }]\n});\n\nreturn [{ json: { ...data, apiPayload: payload } }];"
+      },
+      "id": "build-email-prompt",
+      "name": "📝 Build Email Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 680]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "anthropic-version", "value": "2023-06-01" }]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.apiPayload }}",
+        "options": { "timeout": 60000, "response": { "response": { "fullResponse": false, "responseFormat": "json" } } }
+      },
+      "id": "extract-facture",
+      "name": "📄 Extraction Facture",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 140],
+      "credentials": { "httpHeaderAuth": { "name": "Anthropic API" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "anthropic-version", "value": "2023-06-01" }]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.apiPayload }}",
+        "options": { "timeout": 60000, "response": { "response": { "fullResponse": false, "responseFormat": "json" } } }
+      },
+      "id": "extract-contrat",
+      "name": "📜 Extraction Contrat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 320],
+      "credentials": { "httpHeaderAuth": { "name": "Anthropic API" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "anthropic-version", "value": "2023-06-01" }]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.apiPayload }}",
+        "options": { "timeout": 60000, "response": { "response": { "fullResponse": false, "responseFormat": "json" } } }
+      },
+      "id": "extract-bc",
+      "name": "🛒 Extraction Bon de Commande",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 500],
+      "credentials": { "httpHeaderAuth": { "name": "Anthropic API" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "anthropic-version", "value": "2023-06-01" }]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.apiPayload }}",
+        "options": { "timeout": 60000, "response": { "response": { "fullResponse": false, "responseFormat": "json" } } }
+      },
+      "id": "extract-email",
+      "name": "📧 Extraction Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 680],
+      "credentials": { "httpHeaderAuth": { "name": "Anthropic API" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\n\nlet extractedText = '';\nif (response.content && Array.isArray(response.content)) {\n  const textBlock = response.content.find(b => b.type === 'text');\n  extractedText = textBlock ? textBlock.text : '';\n} else if (typeof response.content === 'string') {\n  extractedText = response.content;\n}\n\nconst cleaned = extractedText\n  .replace(/```json/gi, '')\n  .replace(/```/g, '')\n  .trim();\n\nlet extracted = {};\ntry {\n  extracted = JSON.parse(cleaned);\n} catch(e) {\n  extracted = { erreur: 'Parsing echoue', raw: extractedText.substring(0, 300) };\n}\n\nlet contextData = {};\ntry { contextData = $('📊 Parse Classification').first().json; } catch(e) {}\n\n// Champs aplatis pour sauvegarde\nlet numero = '', date = '', tiers = '', montant = 0, echeance = '', statut = '';\n\nif (contextData.docType === 'FACTURE') {\n  numero = extracted.numero_facture || ''; date = extracted.date_facture || '';\n  tiers = extracted.fournisseur_nom || ''; montant = extracted.montant_ttc || 0;\n  echeance = extracted.date_echeance || ''; statut = extracted.statut || '';\n} else if (contextData.docType === 'CONTRAT') {\n  numero = extracted.titre_contrat || ''; date = extracted.date_signature || '';\n  tiers = extracted.partie_2_nom || ''; montant = extracted.montant_contrat || 0;\n  echeance = extracted.date_fin || ''; statut = extracted.statut || '';\n} else if (contextData.docType === 'BON_COMMANDE') {\n  numero = extracted.numero_bc || ''; date = extracted.date_commande || '';\n  tiers = extracted.fournisseur_nom || ''; montant = extracted.montant_ttc || 0;\n  echeance = extracted.date_livraison_souhaitee || ''; statut = extracted.statut || '';\n} else if (contextData.docType === 'EMAIL') {\n  numero = extracted.sujet || ''; date = extracted.date_reception || '';\n  tiers = extracted.expediteur || ''; montant = 0;\n  echeance = extracted.deadline_action || ''; statut = extracted.categorie || '';\n}\n\nreturn [{\n  json: {\n    ...contextData,\n    extracted,\n    extractedJson: JSON.stringify(extracted),\n    numero, date, tiers, montant, echeance, statut,\n    processedAt: new Date().toISOString(),\n    success: !extracted.erreur\n  }\n}];"
+      },
+      "id": "merge-results",
+      "name": "🔗 Fusion des résultats",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 400]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "mode": "id", "value": "VOTRE_GOOGLE_SHEET_ID" },
+        "sheetName": { "__rl": true, "mode": "name", "value": "Documents" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID Traitement": "={{ $json.processingId }}",
+            "Date traitement": "={{ $json.processedAt }}",
+            "Type": "={{ $json.docType }}",
+            "Client": "={{ $json.clientName }}",
+            "Nom fichier": "={{ $json.fileName }}",
+            "Numero": "={{ $json.numero }}",
+            "Date doc": "={{ $json.date }}",
+            "Tiers": "={{ $json.tiers }}",
+            "Montant": "={{ $json.montant }}",
+            "Echeance": "={{ $json.echeance }}",
+            "Statut": "={{ $json.statut }}",
+            "Urgence": "={{ $json.urgence }}",
+            "Resume": "={{ $json.resumeCourt }}",
+            "Donnees completes": "={{ $json.extractedJson }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": { "valueInputMode": "USER_ENTERED" }
+      },
+      "id": "save-google-sheets",
+      "name": "📊 Sauvegarde Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2220, 260],
+      "credentials": { "googleSheetsOAuth2Api": { "name": "Google Sheets" } }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "create",
+        "databaseId": { "__rl": true, "mode": "id", "value": "VOTRE_NOTION_DATABASE_ID" },
+        "title": "={{ $json.numero || $json.fileName }}",
+        "propertiesUi": {
+          "propertyValues": [
+            { "key": "Type|select", "selectValue": "={{ $json.docType }}" },
+            { "key": "Client|rich_text", "textContent": "={{ $json.clientName }}" },
+            { "key": "Statut|select", "selectValue": "Traité" },
+            { "key": "Resume|rich_text", "textContent": "={{ $json.resumeCourt }}" }
+          ]
+        },
+        "blockUi": {
+          "blockValues": [
+            { "type": "heading_2", "textContent": "Donnees extraites" },
+            { "type": "code", "textContent": "={{ $json.extractedJson }}", "language": "json" }
+          ]
+        }
+      },
+      "id": "save-notion",
+      "name": "📓 Sauvegarde Notion",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [2220, 420],
+      "credentials": { "notionApi": { "name": "Notion API" } }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": { "__rl": true, "mode": "id", "value": "VOTRE_AIRTABLE_BASE_ID" },
+        "table": { "__rl": true, "mode": "name", "value": "Documents" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nom fichier": "={{ $json.fileName }}",
+            "Type": "={{ $json.docType }}",
+            "Client": "={{ $json.clientName }}",
+            "Date traitement": "={{ $json.processedAt }}",
+            "Numero": "={{ $json.numero }}",
+            "Tiers": "={{ $json.tiers }}",
+            "Montant": "={{ $json.montant }}",
+            "Statut": "={{ $json.statut }}",
+            "Urgence": "={{ $json.urgence }}",
+            "Resume": "={{ $json.resumeCourt }}",
+            "Donnees extraites": "={{ $json.extractedJson }}"
+          },
+          "matchingColumns": [], "schema": []
+        },
+        "options": {}
+      },
+      "id": "save-airtable",
+      "name": "🗃️ Sauvegarde Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [2220, 580],
+      "credentials": { "airtableTokenApi": { "name": "Airtable API" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst d = items[0]?.json || {};\n\nreturn [{\n  json: {\n    success: true,\n    processingId: d.processingId,\n    document: {\n      nom: d.fileName,\n      type: d.docType,\n      client: d.clientName,\n      urgence: d.urgence,\n      resume: d.resumeCourt,\n      confidence: d.confidence,\n      recu_le: d.receivedAt,\n      traite_le: d.processedAt\n    },\n    extraction: d.extracted || {},\n    destinations: ['Google Sheets', 'Notion', 'Airtable'],\n    message: '✅ Document traite avec succes — Type: ' + d.docType + ' — Client: ' + d.clientName\n  }\n}];"
+      },
+      "id": "build-response",
+      "name": "✅ Construction réponse",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2440, 420]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": { "responseCode": 200 }
+      },
+      "id": "webhook-response",
+      "name": "📤 Réponse Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2660, 420]
     }
-
-    btn.disabled = true;
-    output.innerHTML = `
-      <div class="demo-output-label">Analyse en cours...</div>
-      <div class="output-loading">
-        <div class="loader"></div>
-        <div class="loader-text">Traitement par l'intelligence artificielle</div>
-      </div>
-    `;
-
-    const start = Date.now();
-
-    try {
-      const res = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          client_name: 'Démo Live',
-          file_name: 'demo.txt',
-          document_text: input
-        })
-      });
-      const data = await res.json();
-      const elapsed = ((Date.now() - start) / 1000).toFixed(2);
-      displayResult(data, elapsed);
-    } catch (e) {
-      output.innerHTML = `
-        <div class="demo-output-label">Erreur</div>
-        <div class="output-empty" style="color: #c8392c;">
-          Service temporairement indisponible.<br>
-          Veuillez réessayer dans quelques instants.
-        </div>
-      `;
-    } finally {
-      btn.disabled = false;
+  ],
+  "connections": {
+    "📥 Webhook Réception Document": {
+      "main": [[{ "node": "🔧 Préparation & Validation", "type": "main", "index": 0 }]]
+    },
+    "🔧 Préparation & Validation": {
+      "main": [[{ "node": "📝 Build Classification Prompt", "type": "main", "index": 0 }]]
+    },
+    "📝 Build Classification Prompt": {
+      "main": [[{ "node": "🧠 Classification IA", "type": "main", "index": 0 }]]
+    },
+    "🧠 Classification IA": {
+      "main": [[{ "node": "📊 Parse Classification", "type": "main", "index": 0 }]]
+    },
+    "📊 Parse Classification": {
+      "main": [[{ "node": "🔀 Routage par type", "type": "main", "index": 0 }]]
+    },
+    "🔀 Routage par type": {
+      "main": [
+        [{ "node": "📝 Build Facture Prompt", "type": "main", "index": 0 }],
+        [{ "node": "📝 Build Contrat Prompt", "type": "main", "index": 0 }],
+        [{ "node": "📝 Build BC Prompt", "type": "main", "index": 0 }],
+        [{ "node": "📝 Build Email Prompt", "type": "main", "index": 0 }]
+      ]
+    },
+    "📝 Build Facture Prompt": {
+      "main": [[{ "node": "📄 Extraction Facture", "type": "main", "index": 0 }]]
+    },
+    "📝 Build Contrat Prompt": {
+      "main": [[{ "node": "📜 Extraction Contrat", "type": "main", "index": 0 }]]
+    },
+    "📝 Build BC Prompt": {
+      "main": [[{ "node": "🛒 Extraction Bon de Commande", "type": "main", "index": 0 }]]
+    },
+    "📝 Build Email Prompt": {
+      "main": [[{ "node": "📧 Extraction Email", "type": "main", "index": 0 }]]
+    },
+    "📄 Extraction Facture": {
+      "main": [[{ "node": "🔗 Fusion des résultats", "type": "main", "index": 0 }]]
+    },
+    "📜 Extraction Contrat": {
+      "main": [[{ "node": "🔗 Fusion des résultats", "type": "main", "index": 0 }]]
+    },
+    "🛒 Extraction Bon de Commande": {
+      "main": [[{ "node": "🔗 Fusion des résultats", "type": "main", "index": 0 }]]
+    },
+    "📧 Extraction Email": {
+      "main": [[{ "node": "🔗 Fusion des résultats", "type": "main", "index": 0 }]]
+    },
+    "🔗 Fusion des résultats": {
+      "main": [[
+        { "node": "📊 Sauvegarde Google Sheets", "type": "main", "index": 0 },
+        { "node": "📓 Sauvegarde Notion", "type": "main", "index": 0 },
+        { "node": "🗃️ Sauvegarde Airtable", "type": "main", "index": 0 }
+      ]]
+    },
+    "📊 Sauvegarde Google Sheets": {
+      "main": [[{ "node": "✅ Construction réponse", "type": "main", "index": 0 }]]
+    },
+    "📓 Sauvegarde Notion": {
+      "main": [[{ "node": "✅ Construction réponse", "type": "main", "index": 0 }]]
+    },
+    "🗃️ Sauvegarde Airtable": {
+      "main": [[{ "node": "✅ Construction réponse", "type": "main", "index": 0 }]]
+    },
+    "✅ Construction réponse": {
+      "main": [[{ "node": "📤 Réponse Webhook", "type": "main", "index": 0 }]]
     }
-  }
-
-  function displayResult(data, elapsed) {
-    const doc = data.document || {};
-    const ext = data.extraction || {};
-    const type = doc.type || 'AUTRE';
-    const conf = Math.round((doc.confidence || 0) * 100);
-
-    let fields = [];
-    if (type === 'FACTURE') {
-      fields = [
-        { l: 'Numéro', v: ext.numero_facture },
-        { l: 'Fournisseur', v: ext.fournisseur_nom },
-        { l: 'Date émission', v: ext.date_facture },
-        { l: 'Échéance', v: ext.date_echeance },
-        { l: 'Montant TTC', v: ext.montant_ttc ? ext.montant_ttc + ' €' : null, big: true },
-        { l: 'Statut', v: ext.statut },
-      ];
-    } else if (type === 'CONTRAT') {
-      fields = [
-        { l: 'Titre', v: ext.titre_contrat },
-        { l: 'Type', v: ext.type_contrat },
-        { l: 'Partie 1', v: ext.partie_1_nom },
-        { l: 'Partie 2', v: ext.partie_2_nom },
-        { l: 'Montant', v: ext.montant_contrat ? ext.montant_contrat + ' €' : null, big: true },
-        { l: 'Fin', v: ext.date_fin },
-      ];
-    } else if (type === 'BON_COMMANDE') {
-      fields = [
-        { l: 'Numéro BC', v: ext.numero_bc },
-        { l: 'Fournisseur', v: ext.fournisseur_nom },
-        { l: 'Date commande', v: ext.date_commande },
-        { l: 'Livraison', v: ext.date_livraison_souhaitee },
-        { l: 'Montant TTC', v: ext.montant_ttc ? ext.montant_ttc + ' €' : null, big: true },
-        { l: 'Priorité', v: ext.priorite },
-      ];
-    } else if (type === 'EMAIL') {
-      fields = [
-        { l: 'Expéditeur', v: ext.expediteur },
-        { l: 'Email', v: ext.expediteur_email },
-        { l: 'Sujet', v: ext.sujet },
-        { l: 'Catégorie', v: ext.categorie },
-        { l: 'Sentiment', v: ext.sentiment },
-        { l: 'Priorité', v: ext.priorite },
-      ];
-    }
-
-    const html = `
-      <div class="demo-output-label">Résultat de l'analyse</div>
-      <div class="output-result">
-        <div class="result-header">
-          <div class="result-type">Document <em>${TYPE_LABELS[type]}</em></div>
-          <div class="result-confidence">Confiance <strong>${conf}%</strong></div>
-        </div>
-        <div class="result-fields">
-          ${fields.map(f => `
-            <div class="result-field">
-              <div class="result-field-label">${f.l}</div>
-              <div class="result-field-value ${f.big ? 'big' : ''}">${f.v || '—'}</div>
-            </div>
-          `).join('')}
-        </div>
-        ${doc.resume ? `<div class="result-resume">${doc.resume}</div>` : ''}
-        <div class="result-time">
-          <span>Traité en ${elapsed}s</span>
-          <span>Sauvegardé · 3 destinations</span>
-        </div>
-      </div>
-    `;
-    document.getElementById('demoOutput').innerHTML = html;
-  }
-</script>
-
-</body>
-</html>
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": { "instanceId": "docmaster-elite-v3" },
+  "pinData": {},
+  "versionId": "3.0.0",
+  "triggerCount": 1,
+  "tags": [
+    { "name": "agent-ia", "createdAt": "2026-01-01T00:00:00.000Z" },
+    { "name": "documents", "createdAt": "2026-01-01T00:00:00.000Z" },
+    { "name": "elite", "createdAt": "2026-01-01T00:00:00.000Z" }
+  ]
+}
